@@ -24,3 +24,13 @@ class CPU:
         low = self.fetch_byte()
         high = self.fetch_byte()
         return low | (high << 8) # merge low byte into empty zeroes created by 8-bit high shift for full 16-bit return
+
+    # initializes CPU state
+    def reset(self) -> None:
+        # reset vector addresses
+        low = self.bus.read(0xFFFC)
+        high = self.bus.read(0xFFFD)
+
+        self.pc = low | (high << 8)
+        self.s = 0xFD # initialized or wrapped to here after pushing status/PC registers upon hardware reset
+        self.p = 0x04 # enable interrupt disable flag
